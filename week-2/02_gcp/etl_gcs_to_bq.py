@@ -22,9 +22,9 @@ def extract_from_gcs(color: str, year: str, month: str) -> Path:
 def transform_data(path: Path) -> pd.DataFrame:
     """Brief data cleaning"""    
     df = pd.read_parquet(path)
-    print(f"pre: missing passenger count: {df['passenger_count'].isna().sum()}")
-    df['passenger_count'] = df['passenger_count'].fillna(0)
-    print(f"post: missing passenger count: {df['passenger_count'].isna().sum()}")
+    # print(f"pre: missing passenger count: {df['passenger_count'].isna().sum()}")
+    # df['passenger_count'] = df['passenger_count'].fillna(0)
+    # print(f"post: missing passenger count: {df['passenger_count'].isna().sum()}")
     return df
 
 @task(log_prints=True)
@@ -40,16 +40,14 @@ def write_to_bq(df: pd.DataFrame) -> None:
     )
 
 @flow()
-def etl_gcs_to_bq() -> None:
+def etl_gcs_to_bq(color, year, month) -> None:
     """The main ETL function to load data to BigQuery"""
-    color = 'yellow'
-    year = 2021
-    month = 1
     
     path = extract_from_gcs(color, year, month)
     
-    # df = transform_data(path)
+    df = transform_data(path) # do nothing but read dataframe only
     write_to_bq(df)
+    print(f"BQ: written {len(df)} rows successfully into Bigquery")
     pass
 
 
