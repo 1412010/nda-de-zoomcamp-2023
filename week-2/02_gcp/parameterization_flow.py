@@ -6,8 +6,8 @@ from prefect.tasks import task_input_hash
 from prefect_gcp.cloud_storage import GcsBucket
 
 
-@task(log_prints=True, retries=3)
-def fetch(url: str, cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1)) -> pd.DataFrame:
+@task(log_prints=True, retries=3, cache_key_fn=task_input_hash, cache_expiration=timedelta(days=1))
+def fetch(url: str) -> pd.DataFrame:
     """Read taxi data from web into pandas Dataframe"""
     print(url)
     df = pd.read_csv(url)
